@@ -12,7 +12,9 @@ public interface Usuariodao {
     void eliminarUsuario(Long id);
 
     void registrar(Usuario usuario); 
-    
-    boolean validarUsuario(Usuario usuario); // Método para validar el usuario
+
+    boolean exiteUsuario(Usuario usuario); // Método para verificar si el usuario existe
+
+    Usuario obtenerUsuarioPorCredenciales(Usuario usuario);
 
 }

@@ -1,13 +1,18 @@
 $(document).ready(function() {
 });
 
-async function registrarUsuarioo() {
+async function registrarUsuario() {
     let datos = {}
     datos.nombre = document.getElementById("nombre").value;
     datos.apellido = document.getElementById("apellido").value;
     datos.email = document.getElementById("email").value;
     datos.password = document.getElementById("password").value;
         let repeatPassword = document.getElementById("repeatPassword").value;
+
+        if( usuariodao.exiteUsuario(usuario.getemail) ) {
+          return alert("El usuario ya existe. Por favor, elige otro correo electrónico.");
+          return false; // Exit the function if the user already exists
+        }
     
         if (datos.password !== repeatPassword) {
             alert("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");

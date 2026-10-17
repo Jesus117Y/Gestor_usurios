@@ -2,6 +2,8 @@ package com.CursoJava.Curso.controllers;
 
 import java.util.List;
 
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import com.CursoJava.Curso.dao.Usuariodao;
 import com.CursoJava.Curso.models.Usuario;
 
@@ -43,6 +45,13 @@ public class UserController {
         // Por ejemplo, podrías llamar a un método en tu capa de servicio para guardar el usuario en la base de datos
         // usuarioService.registrarUsuario(usuario);
     }   
+
+    public boolean exiteUsuario(Usuario usuario){
+        long cantidad = entityManager.createQuery("SELECT COUNT(u) FROM Usuario u WHERE u.email = :email", Long.class)
+                .setParameter("email", usuario.getEmail())
+                .getSingleResult();
+                return cantidad > 0;
+    }
 
 
 

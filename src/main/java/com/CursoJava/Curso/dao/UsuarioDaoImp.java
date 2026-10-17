@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import com.CursoJava.Curso.models.Usuario;
 
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import jakarta.transaction.Transactional;
 
 import jakarta.persistence.EntityManager;
@@ -41,16 +43,29 @@ public class UsuarioDaoImp implements Usuariodao {
     }
 
     @Override
-    public boolean validarUsuario(Usuario usuario) {
-        String query = "FROM Usuario  WHERE email = :email AND password = :password"; // Consulta JPQL para validar el usuario
+    public Usuario obtenerUsuarioPorCredenciales(Usuario usuario) {
+        String query = "FROM Usuario  WHERE email = :email "; // Consulta JPQL para validar el usuario
         List<Usuario> resultado = entityManager.createQuery(query)
                 .setParameter("email", usuario.getEmail()) // Establece el parámetro del email
-                .setParameter("password", usuario.getPassword()) // Establece el parámetro de la contraseña
                 .getResultList(); // Ejecuta la consulta y obtiene la lista de usuarios que coinciden con las credenciales
         
-        return !resultado.isEmpty(); // Retorna true si se encontró un usuario válido, false en caso contrario
+        if (resultado.isEmpty()) { // Verifica si no se encontró ningún usuario
+            return null; // Retorna false si no se encontró un usuario válido
+        }
+
+        String hashedPassword = resultado.get(0).getPassword(); // Obtiene la contraseña hasheada del primer usuario encontrado
+
+        Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id); // Crea una instancia de Argon2 para verificar la contraseña
+        if( argon2.verify(hashedPassword, usuario.getPassword())){
+            return lista.get(0);
+        }
+        return null;
+
+        //return !resultado.isEmpty() && passWValida; // Retorna true si se encontró un usuario válido y la contraseña es correcta, false en caso contrario
 
     }
+
+   
 
 
 

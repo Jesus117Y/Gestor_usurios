@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.CursoJava.Curso.dao.Usuariodao;
 import com.CursoJava.Curso.models.Usuario;
+import com.CursoJava.Curso.utils.JWTUtils;
 
 @RestController 
 public class AuthController {
@@ -15,20 +16,20 @@ public class AuthController {
     @Autowired 
     private Usuariodao Usuariodao;
 
+    @Autowired 
+    private JWTUtils jwtUtils;
+
     @RequestMapping (value = "api/validarUsuario", method = RequestMethod.POST)
     public String login(@RequestBody Usuario usuario) {
         //Usuariodao.vericarUsuario(usuario);
-        if (Usuariodao.validarUsuario(usuario)){
-            return "Inicio de sesión exitoso";
-        }
-        return "Credenciales inválidas";
-        // TODO: Validate credentials once the usuariodao dependency is injected.
-        // Aquí puedes implementar la lógica para validar el usuario
-        // Por ejemplo, podrías llamar a un método en tu capa de servicio para verificar las credenciales del usuario
-        // usuarioService.validarUsuario(usuario.getEmail(), usuario.getPassword());
 
-        // Retorna un mensaje de éxito o error según corresponda
-        // return "Inicio de sesión exitoso"; // Cambia esto según tu lógica de validación
+        Usuario ingresar = Usuariodao.obtenerUsuarioPorCredenciales(usuario);
+        if (ingresar != null){
+            
+            String tokenJWT = jwtUtils.create(String.valueOf(ingresar.getId()), ingresar.getEmail() );
+
+            return tokenJWT;
+        }
     }
 
 }
